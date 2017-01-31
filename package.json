@@ -1,0 +1,21 @@
+{
+	"name": "remote-run",
+	"version": "1.0.0",
+	"description": "Remote run commands.",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node index.js"
+	},
+	"keywords": [
+		"remote",
+		"run"
+	],
+	"author": "Fisher",
+	"license": "ISC",
+	"dependencies": {
+		"body-parser": "^1.16.0",
+		"express": "^4.14.0",
+		"morgan": "^1.7.0"
+	}
+}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Remote Run</title>
+	<style>
+		html, body {
+			/*margin: 0;*/
+			/*padding: 0;*/
+		}
+
+		h1, h2, form {
+			/*margin: 0.67em 0.5em;*/
+		}
+
+		.std {
+			background: #000;
+			padding: 0.6em;
+			min-height: 2em;
+		}
+
+		#stdout {
+			color: white;
+		}
+
+		#stderr {
+			color: red;
+		}
+
+		#cmd, .button {
+			padding: 0.25em 0.5em;
+		}
+
+	</style>
+</head>
+<body>
+
+<h1>Remote Run</h1>
+
+<form onsubmit="return onCommit()">
+	<label for="cmd">Command: </label>
+	<input id="cmd" type="text" autocomplete="false"/>
+	<input class="button" type="button" value="Run Command" onclick="onCommit()"/>
+</form>
+
+<div>
+	<h2>Actions</h2>
+	<input class="button" type="button" value="List Local Files" onclick="doRunCommand('ls -al ~')"/>
+	<input class="button" type="button" value="Who is Logged on" onclick="doRunCommand('who')"/>
+</div>
+
+<div>
+	<h2>Stdout: </h2>
+	<pre class="std" id="stdout">
+
+		</pre>
+	<h2>Stderr: </h2>
+	<pre class="std" id="stderr">
+
+		</pre>
+</div>
+
+<script>
+	var cmdDom = document.getElementById('cmd');
+	var stdoutDom = document.getElementById('stdout');
+	var stderrDom = document.getElementById('stderr');
+	var doRunCommand = function (cmd) {
+		fetch('http://localhost:3000/', {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({cmd: cmd})
+		}).then(function (response) {
+			return response.json();
+		}).then(function (result) {
+			console.log('Got response: ', result);
+			stdoutDom.innerHTML = result.stdout;
+			stderrDom.innerHTML = result.stderr;
+			cmdDom.focus();
+		}).catch(function (err) {
+			alert('Some error happened! ' + JSON.stringify(err));
+			console.log(err);
+		});
+	};
+	var onCommit = function () {
+		var cmd = cmdDom.value.trim();
+		if (!cmd) {
+			alert('Please specify Command that is to be run!');
+			return false;
+		}
+		doRunCommand(cmd);
+		return false;
+	};
+	cmdDom.focus();
+</script>
+
+</body>
+</html>
